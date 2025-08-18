@@ -18,7 +18,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "tb_clients")
-public class Client extends User implements Serializable {
+public class Client extends User{
 
     @Enumerated(EnumType.STRING)
     HealthInsurance healthInsurance;

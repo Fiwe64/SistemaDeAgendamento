@@ -15,7 +15,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "tb_professionals")
-public class Professional extends User implements Serializable  {
+public class Professional extends User{
 
     @Enumerated(EnumType.STRING)
     private Specialty specialty;
