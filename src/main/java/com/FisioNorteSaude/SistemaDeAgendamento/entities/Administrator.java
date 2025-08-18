@@ -21,5 +21,4 @@ public class Administrator extends User {
 
     @NotBlank(message = "A senha é obrigatória.")
     private String password;
-
 }
