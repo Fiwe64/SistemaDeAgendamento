@@ -1,7 +1,32 @@
 package com.FisioNorteSaude.SistemaDeAgendamento.entities;
 
-public abstract class User {
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+
+import java.io.Serial;
+import java.io.Serializable;
+import java.time.LocalDate;
+
+
+
+
+@Data
+@NoArgsConstructor
+@EqualsAndHashCode(of = "id")
+@Entity
+@Table(name = "tb_users")
+@Inheritance(strategy = InheritanceType.JOINED)
+public abstract class User implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
+
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private LocalDate birth
+    private LocalDate birth;
 }
