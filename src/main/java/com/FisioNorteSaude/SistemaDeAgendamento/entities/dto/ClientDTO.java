@@ -1,0 +1,34 @@
+package com.FisioNorteSaude.SistemaDeAgendamento.entities.dto;
+
+import com.FisioNorteSaude.SistemaDeAgendamento.entities.Client;
+import com.FisioNorteSaude.SistemaDeAgendamento.entities.enums.HealthInsurance;
+import com.FisioNorteSaude.SistemaDeAgendamento.entities.enums.PaymentMethod;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
+import java.time.LocalDate;
+
+@Data
+@NoArgsConstructor
+public class ClientDTO implements Serializable {
+
+
+    private Long id;
+    private String name;
+    private LocalDate birth;
+    private Long cpf;
+    private String phone;
+    private PaymentMethod paymentMethod;
+    private HealthInsurance healthInsurance;
+
+    public ClientDTO(Client entity) {
+        this.id = entity.getId();
+        this.name = entity.getName();
+        this.birth = entity.getBirth();
+        this.cpf = entity.getCpf();
+        this.phone = entity.getPhone();
+        this.paymentMethod = entity.getPaymentMethod();
+        this.healthInsurance = entity.getHealthInsurance();
+    }
+}

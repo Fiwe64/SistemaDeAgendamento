@@ -20,6 +20,8 @@ import java.io.Serializable;
 @Table(name = "tb_clients")
 public class Client extends User{
 
+    private String phone;
+
     @Enumerated(EnumType.STRING)
     HealthInsurance healthInsurance;
     @Enumerated(EnumType.STRING)
