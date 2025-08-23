@@ -1,4 +1,4 @@
-package com.FisioNorteSaude.SistemaDeAgendamento.entities;
+package com.FisioNorteSaude.SistemaDeAgendamento.model;
 
 import jakarta.persistence.*;
 import lombok.Data;

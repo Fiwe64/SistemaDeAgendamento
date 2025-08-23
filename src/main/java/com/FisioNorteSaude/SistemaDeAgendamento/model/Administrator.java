@@ -1,4 +1,4 @@
-package com.FisioNorteSaude.SistemaDeAgendamento.entities;
+package com.FisioNorteSaude.SistemaDeAgendamento.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;

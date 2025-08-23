@@ -1,7 +1,7 @@
-package com.FisioNorteSaude.SistemaDeAgendamento.entities;
+package com.FisioNorteSaude.SistemaDeAgendamento.model;
 
-import com.FisioNorteSaude.SistemaDeAgendamento.entities.enums.HealthInsurance;
-import com.FisioNorteSaude.SistemaDeAgendamento.entities.enums.PaymentMethod;
+import com.FisioNorteSaude.SistemaDeAgendamento.model.enums.HealthInsurance;
+import com.FisioNorteSaude.SistemaDeAgendamento.model.enums.PaymentMethod;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -9,8 +9,6 @@ import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import java.io.Serializable;
 
 
 @Data

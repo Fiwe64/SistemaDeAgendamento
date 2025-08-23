@@ -1,6 +1,6 @@
 package com.FisioNorteSaude.SistemaDeAgendamento.repositories;
 
-import com.FisioNorteSaude.SistemaDeAgendamento.entities.Client;
+import com.FisioNorteSaude.SistemaDeAgendamento.model.Client;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

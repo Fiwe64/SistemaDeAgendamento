@@ -1,4 +1,4 @@
-package com.FisioNorteSaude.SistemaDeAgendamento.entities.enums;
+package com.FisioNorteSaude.SistemaDeAgendamento.model.enums;
 
 public enum Specialty {
     PSYCHOLOGIST(1),

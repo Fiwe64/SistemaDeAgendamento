@@ -1,8 +1,8 @@
-package com.FisioNorteSaude.SistemaDeAgendamento.entities.dto;
+package com.FisioNorteSaude.SistemaDeAgendamento.model.dto;
 
-import com.FisioNorteSaude.SistemaDeAgendamento.entities.Client;
-import com.FisioNorteSaude.SistemaDeAgendamento.entities.enums.HealthInsurance;
-import com.FisioNorteSaude.SistemaDeAgendamento.entities.enums.PaymentMethod;
+import com.FisioNorteSaude.SistemaDeAgendamento.model.Client;
+import com.FisioNorteSaude.SistemaDeAgendamento.model.enums.HealthInsurance;
+import com.FisioNorteSaude.SistemaDeAgendamento.model.enums.PaymentMethod;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

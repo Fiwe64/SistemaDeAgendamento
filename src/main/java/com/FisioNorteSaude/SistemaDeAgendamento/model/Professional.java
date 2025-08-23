@@ -1,6 +1,6 @@
-package com.FisioNorteSaude.SistemaDeAgendamento.entities;
+package com.FisioNorteSaude.SistemaDeAgendamento.model;
 
-import com.FisioNorteSaude.SistemaDeAgendamento.entities.enums.Specialty;
+import com.FisioNorteSaude.SistemaDeAgendamento.model.enums.Specialty;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -9,7 +9,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
