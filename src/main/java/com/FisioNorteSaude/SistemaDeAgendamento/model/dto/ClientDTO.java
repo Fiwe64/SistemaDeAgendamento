@@ -19,8 +19,7 @@ public class ClientDTO implements Serializable {
     private LocalDate birth;
     private Long cpf;
     private String phone;
-    private PaymentMethod paymentMethod;
-    private HealthInsurance healthInsurance;
+
 
     public ClientDTO(Client entity) {
         this.id = entity.getId();
@@ -28,16 +27,14 @@ public class ClientDTO implements Serializable {
         this.birth = entity.getBirth();
         this.cpf = entity.getCpf();
         this.phone = entity.getPhone();
-        this.paymentMethod = entity.getPaymentMethod();
-        this.healthInsurance = entity.getHealthInsurance();
+
     }
     public ClientDTO(ClientNewDTO entity) {
         this.name = entity.getName();
         this.birth = entity.getBirth();
         this.cpf = entity.getCpf();
         this.phone = entity.getPhone();
-        this.paymentMethod = entity.getPaymentMethod();
-        this.healthInsurance = entity.getHealthInsurance();
+
     }
 
 }

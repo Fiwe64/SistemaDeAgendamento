@@ -21,10 +21,7 @@ public class Client extends User{
 
     private String phone;
 
-    @Enumerated(EnumType.STRING)
-    HealthInsurance healthInsurance;
-    @Enumerated(EnumType.STRING)
-    PaymentMethod paymentMethod;
+
 
 
     public Client(ClientNewDTO clientDTO){
@@ -34,7 +31,6 @@ public class Client extends User{
         this.birth = clientDTO.getBirth();
 
         this.phone = clientDTO.getPhone();
-        this.healthInsurance = clientDTO.getHealthInsurance();
-        this.paymentMethod = clientDTO.getPaymentMethod();
+
     }
 }
