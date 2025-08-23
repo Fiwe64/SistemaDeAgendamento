@@ -4,6 +4,7 @@ import com.FisioNorteSaude.SistemaDeAgendamento.model.Client;
 import com.FisioNorteSaude.SistemaDeAgendamento.model.dto.ClientDTO;
 import com.FisioNorteSaude.SistemaDeAgendamento.repositories.ClientRepository;
 import com.FisioNorteSaude.SistemaDeAgendamento.services.exceptions.ResourceNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,8 +17,9 @@ import java.util.stream.Collectors;
 public class ClientService {
 
     @Autowired
-    ClientRepository clientRepository;
+    private ClientRepository clientRepository;
 
+    
     public List<ClientDTO>  findAll (){
         List<Client> list = clientRepository.findAll();
 
