@@ -22,8 +22,8 @@ public abstract class User implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String name;
-    private LocalDate birth;
-    private Long cpf;
+    protected Long id;
+    protected String name;
+    protected LocalDate birth;
+    protected Long cpf;
 }

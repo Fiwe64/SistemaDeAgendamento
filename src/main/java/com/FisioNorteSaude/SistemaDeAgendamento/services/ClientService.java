@@ -2,6 +2,7 @@ package com.FisioNorteSaude.SistemaDeAgendamento.services;
 
 import com.FisioNorteSaude.SistemaDeAgendamento.model.Client;
 import com.FisioNorteSaude.SistemaDeAgendamento.model.dto.ClientDTO;
+import com.FisioNorteSaude.SistemaDeAgendamento.model.dto.ClientNewDTO;
 import com.FisioNorteSaude.SistemaDeAgendamento.repositories.ClientRepository;
 import com.FisioNorteSaude.SistemaDeAgendamento.services.exceptions.ResourceNotFoundException;
 import jakarta.transaction.Transactional;
@@ -19,7 +20,7 @@ public class ClientService {
     @Autowired
     private ClientRepository clientRepository;
 
-    
+
     public List<ClientDTO>  findAll (){
         List<Client> list = clientRepository.findAll();
 
@@ -34,6 +35,18 @@ public class ClientService {
 
         return new ClientDTO(entity);
     }
+
+    public ClientDTO insert(ClientNewDTO clientDTO){
+            Client client = new Client(clientDTO);
+
+            client = clientRepository.save(client);
+
+
+            return new ClientDTO(client);
+    }
+
+
+
 
 
 }

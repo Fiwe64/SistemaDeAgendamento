@@ -31,4 +31,13 @@ public class ClientDTO implements Serializable {
         this.paymentMethod = entity.getPaymentMethod();
         this.healthInsurance = entity.getHealthInsurance();
     }
+    public ClientDTO(ClientNewDTO entity) {
+        this.name = entity.getName();
+        this.birth = entity.getBirth();
+        this.cpf = entity.getCpf();
+        this.phone = entity.getPhone();
+        this.paymentMethod = entity.getPaymentMethod();
+        this.healthInsurance = entity.getHealthInsurance();
+    }
+
 }

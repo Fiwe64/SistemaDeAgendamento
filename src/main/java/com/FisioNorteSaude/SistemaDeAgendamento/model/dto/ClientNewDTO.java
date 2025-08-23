@@ -13,6 +13,7 @@ public class ClientNewDTO {
     private String name;
     private LocalDate birth;
     private Long cpf;
+    private String phone;
     private PaymentMethod paymentMethod;
     private HealthInsurance healthInsurance;
 }
