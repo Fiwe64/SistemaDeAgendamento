@@ -1,9 +1,6 @@
 package com.FisioNorteSaude.SistemaDeAgendamento.controllers;
 
-import com.FisioNorteSaude.SistemaDeAgendamento.model.Client;
 import com.FisioNorteSaude.SistemaDeAgendamento.model.dto.ClientDTO;
-import com.FisioNorteSaude.SistemaDeAgendamento.model.dto.ClientNewDTO;
-import com.FisioNorteSaude.SistemaDeAgendamento.repositories.ClientRepository;
 import com.FisioNorteSaude.SistemaDeAgendamento.services.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +24,7 @@ public class ClientController {
         return ResponseEntity.ok().body(list);
     }
     @PostMapping
-    public  ResponseEntity<ClientDTO> insert(@RequestBody ClientNewDTO obj){
+    public  ResponseEntity<ClientDTO> insert(@RequestBody ClientDTO obj){
         ClientDTO newClient = clientService.insert(obj);
 
 

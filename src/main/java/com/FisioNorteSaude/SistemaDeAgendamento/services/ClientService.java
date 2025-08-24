@@ -2,10 +2,8 @@ package com.FisioNorteSaude.SistemaDeAgendamento.services;
 
 import com.FisioNorteSaude.SistemaDeAgendamento.model.Client;
 import com.FisioNorteSaude.SistemaDeAgendamento.model.dto.ClientDTO;
-import com.FisioNorteSaude.SistemaDeAgendamento.model.dto.ClientNewDTO;
 import com.FisioNorteSaude.SistemaDeAgendamento.repositories.ClientRepository;
 import com.FisioNorteSaude.SistemaDeAgendamento.services.exceptions.ResourceNotFoundException;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +34,7 @@ public class ClientService {
         return new ClientDTO(entity);
     }
 
-    public ClientDTO insert(ClientNewDTO clientDTO){
+    public ClientDTO insert(ClientDTO clientDTO){
             Client client = new Client(clientDTO);
 
             client = clientRepository.save(client);

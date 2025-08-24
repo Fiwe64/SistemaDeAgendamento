@@ -1,11 +1,7 @@
 package com.FisioNorteSaude.SistemaDeAgendamento.model;
 
-import com.FisioNorteSaude.SistemaDeAgendamento.model.dto.ClientNewDTO;
-import com.FisioNorteSaude.SistemaDeAgendamento.model.enums.HealthInsurance;
-import com.FisioNorteSaude.SistemaDeAgendamento.model.enums.PaymentMethod;
+import com.FisioNorteSaude.SistemaDeAgendamento.model.dto.ClientDTO;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -24,11 +20,11 @@ public class Client extends User{
 
 
 
-    public Client(ClientNewDTO clientDTO){
-        super();
-        this.name = clientDTO.getName();
-        this.cpf = clientDTO.getCpf();
-        this.birth = clientDTO.getBirth();
+    public Client(ClientDTO clientDTO){
+        super.setName(clientDTO.getName());
+        super.setCpf(clientDTO.getCpf());
+        super.setBirth(clientDTO.getBirth());
+        super.setId(clientDTO.getId());
 
         this.phone = clientDTO.getPhone();
 

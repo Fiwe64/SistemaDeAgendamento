@@ -29,7 +29,7 @@ public class ClientDTO implements Serializable {
         this.phone = entity.getPhone();
 
     }
-    public ClientDTO(ClientNewDTO entity) {
+    public ClientDTO(ClientDTO entity) {
         this.name = entity.getName();
         this.birth = entity.getBirth();
         this.cpf = entity.getCpf();
