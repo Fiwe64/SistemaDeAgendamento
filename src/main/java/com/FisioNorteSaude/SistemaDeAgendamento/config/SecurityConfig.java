@@ -18,7 +18,9 @@ public class SecurityConfig {
                         .frameOptions(FrameOptionsConfig::disable)
                 )
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/h2-console/**", "/clients/**").permitAll()
+                        // Permite acesso a todos os seus endpoints REST
+                        .requestMatchers("/h2-console/**", "/clients/**", "/professionals/**", "/appointments/**").permitAll()
+                        // Todas as outras requisições requerem autenticação
                         .anyRequest().authenticated()
                 );
         return http.build();

@@ -21,9 +21,8 @@ public class Professional extends User{
     private Specialty specialty;
 
     public Professional(ProfessionalDTO entity) {
-        super.setName(entity.getName());
-        super.setCpf(entity.getCpf());
-        super.setBirth(entity.getBirth());
+        super(entity.getName(), entity.getBirth(), entity.getCpf());
+
 
         this.specialty = entity.getSpecialty();
     }
