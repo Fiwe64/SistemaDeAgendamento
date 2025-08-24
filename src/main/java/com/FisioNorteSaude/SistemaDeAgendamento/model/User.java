@@ -26,4 +26,10 @@ public abstract class User implements Serializable {
     protected String name;
     protected LocalDate birth;
     protected Long cpf;
+
+    public User(String name, LocalDate birth, Long cpf) {
+        this.name = name;
+        this.birth = birth;
+        this.cpf = cpf;
+    }
 }

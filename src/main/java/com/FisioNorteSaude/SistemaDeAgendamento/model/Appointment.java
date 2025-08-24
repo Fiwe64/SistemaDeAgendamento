@@ -19,7 +19,12 @@ public class Appointment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private LocalDateTime dateTime;
+
+    @ManyToOne
+    @JoinColumn(name = "client_id")
     private Client client;
+    @ManyToOne
+    @JoinColumn(name = "professional_id")
     private Professional professional;
 
     @Enumerated(EnumType.STRING)
@@ -28,7 +33,7 @@ public class Appointment {
     private PaymentMethod paymentMethod;
 
 
-    public Appointment(AppointmentDTO entity) {
+    public Appointment(AppointmentDTO entity){
         this.id = entity.getId();
         this.dateTime = entity.getDateTime();
         this.client = new Client(entity.getClient());

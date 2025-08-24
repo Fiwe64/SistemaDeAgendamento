@@ -21,10 +21,7 @@ public class Client extends User{
 
 
     public Client(ClientDTO clientDTO){
-        super.setName(clientDTO.getName());
-        super.setCpf(clientDTO.getCpf());
-        super.setBirth(clientDTO.getBirth());
-        super.setId(clientDTO.getId());
+        super(clientDTO.getName(), clientDTO.getBirth(), clientDTO.getCpf());
 
         this.phone = clientDTO.getPhone();
 
