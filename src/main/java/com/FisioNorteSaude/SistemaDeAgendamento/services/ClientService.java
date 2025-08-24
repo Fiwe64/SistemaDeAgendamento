@@ -35,9 +35,9 @@ public class ClientService {
     }
 
     public ClientDTO findById(Long id){
-        Optional<Client> client = clientRepository.findByCpf(id);
+        Optional<Client> client = clientRepository.findById(id);
 
-        Client entity = client.orElseThrow(()-> new ResourceNotFoundException("Cliente com CPF " + id + " não encontrado."));
+        Client entity = client.orElseThrow(()-> new ResourceNotFoundException("Cliente com id " + id + " não encontrado."));
 
         return new ClientDTO(entity);
     }
@@ -66,11 +66,19 @@ public class ClientService {
             return new ClientDTO(entity);
     }
 
-    private void updateData(Client entity,ClientDTO dto){
-        entity.setName(dto.getName());
-        entity.setCpf(dto.getCpf());
-        entity.setPhone(dto.getPhone());
-        entity.setBirth(dto.getBirth());
+    private void updateData(Client entity, ClientDTO dto) {
+        if (dto.getName() != null) {
+            entity.setName(dto.getName());
+        }
+        if (dto.getCpf() != null) {
+            entity.setCpf(dto.getCpf());
+        }
+        if (dto.getPhone() != null) {
+            entity.setPhone(dto.getPhone());
+        }
+        if (dto.getBirth() != null) {
+            entity.setBirth(dto.getBirth());
+        }
     }
 
 

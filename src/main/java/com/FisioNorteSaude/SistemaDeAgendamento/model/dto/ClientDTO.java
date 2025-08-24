@@ -22,11 +22,11 @@ public class ClientDTO implements Serializable {
 
 
     public ClientDTO(Client entity) {
+        this.id = entity.getId();
         this.name = entity.getName();
         this.birth = entity.getBirth();
         this.cpf = entity.getCpf();
         this.phone = entity.getPhone();
-
     }
 
 }
