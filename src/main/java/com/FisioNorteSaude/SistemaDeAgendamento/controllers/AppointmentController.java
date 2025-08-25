@@ -1,6 +1,8 @@
 package com.FisioNorteSaude.SistemaDeAgendamento.controllers;
 
 import com.FisioNorteSaude.SistemaDeAgendamento.model.dto.AppointmentDTO;
+import com.FisioNorteSaude.SistemaDeAgendamento.model.dto.AppointmentNewDTO;
+import com.FisioNorteSaude.SistemaDeAgendamento.model.dto.AppointmentDTO;
 import com.FisioNorteSaude.SistemaDeAgendamento.services.AppointmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +26,7 @@ public class AppointmentController {
         return ResponseEntity.ok().body(list);
     }
     @PostMapping
-    public  ResponseEntity<AppointmentDTO> insert(@RequestBody AppointmentDTO obj){
+    public  ResponseEntity<AppointmentDTO> insert(@RequestBody AppointmentNewDTO obj){
         AppointmentDTO newAppointment = appointmentService.insert(obj);
 
 
@@ -32,5 +34,11 @@ public class AppointmentController {
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(newAppointment.getId()).toUri();
 
         return ResponseEntity.created(uri).body(newAppointment);
+    }
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<AppointmentDTO> update(@PathVariable Long id, @RequestBody AppointmentNewDTO obj){
+        AppointmentDTO updateAppointment = appointmentService.update(id,obj);
+
+        return ResponseEntity.ok().body(updateAppointment);
     }
 }
