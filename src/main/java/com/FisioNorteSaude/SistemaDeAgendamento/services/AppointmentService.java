@@ -48,6 +48,7 @@ public class AppointmentService {
         return new AppointmentDTO(entity);
     }
 
+
     @Transactional
     public AppointmentDTO insert(AppointmentNewDTO dto) { //usando um DTO de entrada
 
@@ -82,6 +83,11 @@ public class AppointmentService {
 
         entity = appointmentRepository.save(entity);
         return new AppointmentDTO(entity);
+    }
+
+    private LocalDateTime findNextAvaliableTimeSlot(LocalDateTime appoinmentDateTime,Professional){
+        LocalTime appoinmentTime = appoinmentDateTime.toLocalTime();
+
     }
 
 
