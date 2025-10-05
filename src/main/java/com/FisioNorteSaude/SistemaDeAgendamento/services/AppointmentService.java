@@ -5,16 +5,21 @@ import com.FisioNorteSaude.SistemaDeAgendamento.model.Client;
 import com.FisioNorteSaude.SistemaDeAgendamento.model.Professional;
 import com.FisioNorteSaude.SistemaDeAgendamento.model.dto.AppointmentDTO;
 import com.FisioNorteSaude.SistemaDeAgendamento.model.dto.AppointmentNewDTO;
+import com.FisioNorteSaude.SistemaDeAgendamento.model.enums.WorkShift;
 import com.FisioNorteSaude.SistemaDeAgendamento.repositories.AppointmentRepository;
 import com.FisioNorteSaude.SistemaDeAgendamento.repositories.ClientRepository;
 import com.FisioNorteSaude.SistemaDeAgendamento.repositories.ProfessionalRepository;
+import com.FisioNorteSaude.SistemaDeAgendamento.services.exceptions.BusinnesException;
 import com.FisioNorteSaude.SistemaDeAgendamento.services.exceptions.ResourceNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
+import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -78,6 +83,8 @@ public class AppointmentService {
         entity = appointmentRepository.save(entity);
         return new AppointmentDTO(entity);
     }
+
+
 
 
     private void updateData(Appointment entity, AppointmentNewDTO dto) { // Usa o DTO de entrada
