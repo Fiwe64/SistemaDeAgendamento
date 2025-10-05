@@ -3,6 +3,7 @@ package com.FisioNorteSaude.SistemaDeAgendamento.model.dto;
 import com.FisioNorteSaude.SistemaDeAgendamento.model.Client;
 import com.FisioNorteSaude.SistemaDeAgendamento.model.enums.HealthInsurance;
 import com.FisioNorteSaude.SistemaDeAgendamento.model.enums.PaymentMethod;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -16,8 +17,10 @@ public class ClientDTO implements Serializable {
 
     private Long id;
     private String name;
+
+
     private LocalDate birth;
-    private Long cpf;
+    private String cpf;
     private String phone;
 
 

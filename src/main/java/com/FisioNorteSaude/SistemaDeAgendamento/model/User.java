@@ -24,10 +24,11 @@ public abstract class User implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;
     protected String name;
-    protected LocalDate birth;
-    protected Long cpf;
 
-    public User(String name, LocalDate birth, Long cpf) {
+    protected LocalDate birth;
+    protected String cpf;
+
+    public User(String name, LocalDate birth, String cpf) {
         this.name = name;
         this.birth = birth;
         this.cpf = cpf;

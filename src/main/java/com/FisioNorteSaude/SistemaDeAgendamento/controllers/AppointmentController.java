@@ -2,7 +2,6 @@ package com.FisioNorteSaude.SistemaDeAgendamento.controllers;
 
 import com.FisioNorteSaude.SistemaDeAgendamento.model.dto.AppointmentDTO;
 import com.FisioNorteSaude.SistemaDeAgendamento.model.dto.AppointmentNewDTO;
-import com.FisioNorteSaude.SistemaDeAgendamento.model.dto.AppointmentDTO;
 import com.FisioNorteSaude.SistemaDeAgendamento.services.AppointmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

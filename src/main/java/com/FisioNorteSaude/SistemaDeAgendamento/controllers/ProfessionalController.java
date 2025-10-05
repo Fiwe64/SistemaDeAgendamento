@@ -1,6 +1,7 @@
 package com.FisioNorteSaude.SistemaDeAgendamento.controllers;
 
 import com.FisioNorteSaude.SistemaDeAgendamento.model.dto.ProfessionalDTO;
+import com.FisioNorteSaude.SistemaDeAgendamento.model.enums.Specialty;
 import com.FisioNorteSaude.SistemaDeAgendamento.services.ProfessionalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -8,7 +9,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/professionals")
@@ -28,6 +31,14 @@ public class ProfessionalController {
         ProfessionalDTO obj = professionalService.findById(id);
 
         return ResponseEntity.ok().body(obj);
+    }
+
+    @GetMapping(value = "/specialties")
+    public ResponseEntity<List<String>> findAllEnums() {
+        List<String> list = Arrays.stream(Specialty.values())
+                .map(Enum::name)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok().body(list);
     }
 
     @PostMapping

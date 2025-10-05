@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FisioNorte Saúde - Sistema de Agendamento</title>
+    
+    <link rel="apple-touch-icon" sizes="180x180" href="./img/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./img/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./img/favicon-16x16.png">
+    <link rel="manifest" href="./img/site.webmanifest">
+   
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            color: #4a5568;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .header p {
+            color: #718096;
+            margin-top: 0.5rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .main-menu {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .menu-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .menu-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        }
+
+        .menu-card h3 {
+            color: #4a5568;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .menu-card p {
+            color: #718096;
+            margin-bottom: 1.5rem;
+        }
+
+        .menu-card .actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            border: 1px solid rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .content-area {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            display: none;
+            min-height: 600px;
+        }
+
+        .content-area.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin-top: 2rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background: #f7fafc;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        tr:hover {
+            background: #f7fafc;
+        }
+
+        .back-btn {
+            margin-bottom: 2rem;
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            border: 1px solid rgba(102, 126, 234, 0.3);
+        }
+
+        .icon {
+            font-size: 1.2rem;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #718096;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #718096;
+        }
+
+        .empty-state .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .header {
+                padding: 1rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .menu-card .actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="header">
+    <h1>🏥 FisioNorte Saúde</h1>
+    <p>Sistema de Agendamento e Gerenciamento</p>
+</div>
+
+<div class="container">
+    <!-- Menu Principal -->
+    <div id="main-menu" class="main-menu">
+        <div class="menu-card" onclick="showSection('clients')">
+            <h3><span class="icon">👥</span> Clientes</h3>
+            <p>Gerencie o cadastro de clientes, consulte informações pessoais e histórico.</p>
+            <div class="actions">
+                <button class="btn btn-primary">Gerenciar Clientes</button>
+            </div>
+        </div>
+
+        <div class="menu-card" onclick="showSection('professionals')">
+            <h3><span class="icon">👨‍⚕️</span> Profissionais</h3>
+            <p>Cadastre e gerencie profissionais de saúde, suas especialidades e informações.</p>
+            <div class="actions">
+                <button class="btn btn-primary">Gerenciar Profissionais</button>
+            </div>
+        </div>
+
+        <div class="menu-card" onclick="showSection('appointments')">
+            <h3><span class="icon">📅</span> Agendamentos</h3>
+            <p>Controle os agendamentos de consultas, horários e status dos atendimentos.</p>
+            <div class="actions">
+                <button class="btn btn-primary">Gerenciar Agendamentos</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Área de Conteúdo - Clientes -->
+    <div id="clients-section" class="content-area">
+        <button class="btn back-btn" onclick="showMainMenu()">
+            <span class="icon">←</span> Voltar ao Menu
+        </button>
+        <h2>Gerenciamento de Clientes</h2>
+        <div style="margin: 2rem 0;">
+            <button class="btn btn-success" onclick="showClientForm()">
+                <span class="icon">+</span> Novo Cliente
+            </button>
+            <button class="btn btn-secondary" onclick="loadClients()">
+                <span class="icon">🔄</span> Atualizar Lista
+            </button>
+        </div>
+
+        <div id="clients-list" class="table-container">
+            <div class="loading">Carregando clientes...</div>
+        </div>
+    </div>
+
+    <!-- Área de Conteúdo - Profissionais -->
+    <div id="professionals-section" class="content-area">
+        <button class="btn back-btn" onclick="showMainMenu()">
+            <span class="icon">←</span> Voltar ao Menu
+        </button>
+        <h2>Gerenciamento de Profissionais</h2>
+        <div style="margin: 2rem 0;">
+            <button class="btn btn-success" onclick="showProfessionalForm()">
+                <span class="icon">+</span> Novo Profissional
+            </button>
+            <button class="btn btn-secondary" onclick="loadProfessionals()">
+                <span class="icon">🔄</span> Atualizar Lista
+            </button>
+        </div>
+
+        <div id="professionals-list" class="table-container">
+            <div class="loading">Carregando profissionais...</div>
+        </div>
+    </div>
+
+    <!-- Área de Conteúdo - Agendamentos -->
+    <div id="appointments-section" class="content-area">
+        <button class="btn back-btn" onclick="showMainMenu()">
+            <span class="icon">←</span> Voltar ao Menu
+        </button>
+        <h2>Gerenciamento de Agendamentos</h2>
+        <div style="margin: 2rem 0;">
+            <button class="btn btn-success" onclick="showAppointmentForm()">
+                <span class="icon">+</span> Novo Agendamento
+            </button>
+            <button class="btn btn-secondary" onclick="loadAppointments()">
+                <span class="icon">🔄</span> Atualizar Lista
+            </button>
+        </div>
+
+        <div id="appointments-list" class="table-container">
+            <div class="loading">Carregando agendamentos...</div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Formulários -->
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <h3 id="modal-title">Formulário</h3>
+        <div id="modal-body"></div>
+        <div style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: flex-end;">
+            <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+            <button class="btn btn-primary" id="modal-save-btn" onclick="saveForm()">Salvar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Configuração da API
+    const API_BASE = 'http://localhost:8080';
+
+    // Estado da aplicação
+    let currentSection = 'main';
+    let currentFormType = '';
+    let editingId = null;
+
+    // Inicialização
+    document.addEventListener('DOMContentLoaded', function() {
+        showMainMenu();
+    });
+
+    // Navegação
+    function showMainMenu() {
+        document.getElementById('main-menu').style.display = 'grid';
+        document.querySelectorAll('.content-area').forEach(area => {
+            area.classList.remove('active');
+        });
+        currentSection = 'main';
+    }
+
+    function showSection(section) {
+        document.getElementById('main-menu').style.display = 'none';
+        document.querySelectorAll('.content-area').forEach(area => {
+            area.classList.remove('active');
+        });
+        document.getElementById(section + '-section').classList.add('active');
+        currentSection = section;
+
+        // Carregar dados automaticamente
+        if (section === 'clients') loadClients();
+        if (section === 'professionals') loadProfessionals();
+        if (section === 'appointments') loadAppointments();
+    }
+
+    // Modal
+    function showModal(title, content) {
+        document.getElementById('modal-title').textContent = title;
+        document.getElementById('modal-body').innerHTML = content;
+        document.getElementById('modal').classList.add('active');
+    }
+
+    function closeModal() {
+        document.getElementById('modal').classList.remove('active');
+        editingId = null;
+    }
+
+    // Formulários
+    function showClientForm(client = null) {
+        currentFormType = 'client';
+        editingId = client ? client.id : null;
+
+        const title = client ? 'Editar Cliente' : 'Novo Cliente';
+        const content = `
+            <form id="client-form">
+                <div class="form-group">
+                    <label for="client-name">Nome Completo *</label>
+                    <input type="text" id="client-name" value="${client ? client.name : ''}" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="client-cpf">CPF *</label>
+                        <input type="text" id="client-cpf" value="${client ? client.cpf : ''}" required placeholder="000.000.000-00">
+                    </div>
+                    <div class="form-group">
+                        <label for="client-phone">Telefone *</label>
+                        <input type="tel" id="client-phone" value="${client ? client.phone : ''}" required placeholder="(00) 00000-0000">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="client-birth">Data de Nascimento *</label>
+                    <input type="date" id="client-birth" value="${client ? client.birth : ''}" required>
+                </div>
+            </form>
+        `;
+        showModal(title, content);
+    }
+
+  
+async function showProfessionalForm(professional = null) {
+    currentFormType = 'professional';
+    editingId = professional ? professional.id : null;
+
+    const title = professional ? 'Editar Profissional' : 'Novo Profissional';
+    
+    // O HTML do formulário agora tem um <select> vazio que vamos preencher
+    const content = `
+        <form id="professional-form">
+            <div class="form-group">
+                <label for="professional-name">Nome Completo *</label>
+                <input type="text" id="professional-name" value="${professional ? professional.name : ''}" required>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="professional-cpf">CPF *</label>
+                    <input type="text" id="professional-cpf" value="${professional ? professional.cpf : ''}" required placeholder="000.000.000-00">
+                </div>
+                <div class="form-group">
+                    <label for="professional-specialty">Especialidade *</label>
+                    <select id="professional-specialty" required>
+                        <option value="">Carregando especialidades...</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="professional-birth">Data de Nascimento *</label>
+                <input type="date" id="professional-birth" value="${professional ? professional.birth : ''}" required>
+            </div>
+        </form>
+    `;
+    
+    showModal(title, content);
+
+    // --- Início da nova lógica ---
+
+    try {
+        // 1. Busca as especialidades no novo endpoint do backend
+        const response = await fetch(`${API_BASE}/professionals/specialties`);
+        const specialties = await response.json();
+
+        // 2. Pega o elemento <select> que acabamos de criar
+        const specialtySelect = document.getElementById('professional-specialty');
+
+        // 3. Limpa as opções ("Carregando...") e adiciona a opção padrão
+        specialtySelect.innerHTML = '<option value="">Selecione a especialidade</option>';
+
+        // 4. Cria um <option> para cada especialidade retornada pela API
+        specialties.forEach(spec => {
+            const option = document.createElement('option');
+            option.value = spec; // ex: "PHYSIOTHERAPIST"
+            
+            // Capitaliza a primeira letra para ficar mais bonito (ex: "Physiotherapist")
+            option.textContent = spec.charAt(0).toUpperCase() + spec.slice(1).toLowerCase(); 
+            
+            // Se estiver editando, já deixa a opção correta selecionada
+            if (professional && professional.specialty === spec) {
+                option.selected = true;
+            }
+
+            specialtySelect.appendChild(option);
+        });
+
+    } catch (error) {
+        console.error('Erro ao carregar especialidades:', error);
+        // Em caso de erro, informa o usuário no próprio select
+        const specialtySelect = document.getElementById('professional-specialty');
+        specialtySelect.innerHTML = '<option value="">Erro ao carregar</option>';
+    }
+    // --- Fim da nova lógica ---
+}
+
+    function showAppointmentForm(appointment = null) {
+        currentFormType = 'appointment';
+        editingId = appointment ? appointment.id : null;
+
+        const title = appointment ? 'Editar Agendamento' : 'Novo Agendamento';
+        const content = `
+            <form id="appointment-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="appointment-client">Cliente *</label>
+                        <select id="appointment-client" required>
+                            <option value="">Selecione o cliente</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="appointment-professional">Profissional *</label>
+                        <select id="appointment-professional" required>
+                            <option value="">Selecione o profissional</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="appointment-date">Data *</label>
+                        <input type="date" id="appointment-date" value="${appointment ? appointment.dateTime.split('T')[0] : ''}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="appointment-time">Horário *</label>
+                        <input type="time" id="appointment-time" value="${appointment ? appointment.dateTime.split('T')[1] : ''}" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="appointment-insurance">Convênio</label>
+                        <select id="appointment-insurance">
+                            <option value="">Particular</option>
+                            <option value="UNIMED" ${appointment && appointment.healthInsurance === 'UNIMED' ? 'selected' : ''}>Unimed</option>
+                            <option value="BRADESCO" ${appointment && appointment.healthInsurance === 'BRADESCO' ? 'selected' : ''}>Bradesco Saúde</option>
+                            <option value="AMIL" ${appointment && appointment.healthInsurance === 'AMIL' ? 'selected' : ''}>Amil</option>
+                            <option value="SULAMERICA" ${appointment && appointment.healthInsurance === 'SULAMERICA' ? 'selected' : ''}>SulAmérica</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="appointment-payment">Forma de Pagamento *</label>
+                        <select id="appointment-payment" required>
+                            <option value="">Selecione</option>
+                            <option value="DINHEIRO" ${appointment && appointment.paymentMethod === 'DINHEIRO' ? 'selected' : ''}>Dinheiro</option>
+                            <option value="CARTAO_CREDITO" ${appointment && appointment.paymentMethod === 'CARTAO_CREDITO' ? 'selected' : ''}>Cartão de Crédito</option>
+                            <option value="CARTAO_DEBITO" ${appointment && appointment.paymentMethod === 'CARTAO_DEBITO' ? 'selected' : ''}>Cartão de Débito</option>
+                            <option value="PIX" ${appointment && appointment.paymentMethod === 'PIX' ? 'selected' : ''}>PIX</option>
+                            <option value="CONVENIO" ${appointment && appointment.paymentMethod === 'CONVENIO' ? 'selected' : ''}>Convênio</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+        `;
+        showModal(title, content);
+
+        // Carregar opções de clientes e profissionais
+        loadSelectOptions();
+
+        if (appointment) {
+            setTimeout(() => {
+                document.getElementById('appointment-client').value = appointment.client.id;
+                document.getElementById('appointment-professional').value = appointment.professional.id;
+            }, 100);
+        }
+    }
+
+    // Carregamento de dados
+    async function loadClients() {
+        try {
+            const response = await fetch(`${API_BASE}/clients`);
+            const clients = await response.json();
+
+            let html = '';
+            if (clients.length === 0) {
+                html = '<div class="empty-state"><div class="icon">👥</div><p>Nenhum cliente cadastrado</p></div>';
+            } else {
+                html = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nome</th>
+                                <th>CPF</th>
+                                <th>Telefone</th>
+                                <th>Data de Nascimento</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                clients.forEach(client => {
+                    html += `
+                        <tr>
+                            <td>${client.id}</td>
+                            <td>${client.name}</td>
+                            <td>${client.cpf}</td>
+                            <td>${client.phone}</td>
+                            <td>${new Date(client.birth).toLocaleDateString('pt-BR')}</td>
+                            <td>
+                                <button class="btn btn-secondary" onclick="showClientForm(${JSON.stringify(client).replace(/"/g, '&quot;')})">
+                                    ✏️ Editar
+                                </button>
+                                <button class="btn btn-danger" onclick="deleteClient(${client.id})">
+                                    🗑️ Excluir
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                html += '</tbody></table>';
+            }
+
+            document.getElementById('clients-list').innerHTML = html;
+        } catch (error) {
+            console.error('Erro ao carregar clientes:', error);
+            document.getElementById('clients-list').innerHTML = '<div class="empty-state"><div class="icon">⚠️</div><p>Erro ao carregar clientes</p></div>';
+        }
+    }
+
+    async function loadProfessionals() {
+        try {
+            const response = await fetch(`${API_BASE}/professionals`);
+            const professionals = await response.json();
+
+            let html = '';
+            if (professionals.length === 0) {
+                html = '<div class="empty-state"><div class="icon">👨‍⚕️</div><p>Nenhum profissional cadastrado</p></div>';
+            } else {
+                html = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nome</th>
+                                <th>CPF</th>
+                                <th>Especialidade</th>
+                                <th>Data de Nascimento</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                professionals.forEach(professional => {
+                    html += `
+                        <tr>
+                            <td>${professional.id}</td>
+                            <td>${professional.name}</td>
+                            <td>${professional.cpf}</td>
+                            <td>${professional.specialty}</td>
+                            <td>${new Date(professional.birth).toLocaleDateString('pt-BR')}</td>
+                            <td>
+                                <button class="btn btn-secondary" onclick="showProfessionalForm(${JSON.stringify(professional).replace(/"/g, '&quot;')})">
+                                    ✏️ Editar
+                                </button>
+                                <button class="btn btn-danger" onclick="deleteProfessional(${professional.id})">
+                                    🗑️ Excluir
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                html += '</tbody></table>';
+            }
+
+            document.getElementById('professionals-list').innerHTML = html;
+        } catch (error) {
+            console.error('Erro ao carregar profissionais:', error);
+            document.getElementById('professionals-list').innerHTML = '<div class="empty-state"><div class="icon">⚠️</div><p>Erro ao carregar profissionais</p></div>';
+        }
+    }
+
+    async function loadAppointments() {
+        try {
+            const response = await fetch(`${API_BASE}/appointments`);
+            const appointments = await response.json();
+
+            let html = '';
+            if (appointments.length === 0) {
+                html = '<div class="empty-state"><div class="icon">📅</div><p>Nenhum agendamento cadastrado</p></div>';
+            } else {
+                html = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Cliente</th>
+                                <th>Profissional</th>
+                                <th>Data/Hora</th>
+                                <th>Convênio</th>
+                                <th>Pagamento</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                appointments.forEach(appointment => {
+                    const dateTime = new Date(appointment.dateTime);
+                    html += `
+                        <tr>
+                            <td>${appointment.id}</td>
+                            <td>${appointment.client.name}</td>
+                            <td>${appointment.professional.name}</td>
+                            <td>${dateTime.toLocaleDateString('pt-BR')} ${dateTime.toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'})}</td>
+                            <td>${appointment.healthInsurance || 'Particular'}</td>
+                            <td>${appointment.paymentMethod}</td>
+                            <td>
+                                <button class="btn btn-secondary" onclick="showAppointmentForm(${JSON.stringify(appointment).replace(/"/g, '&quot;')})">
+                                    ✏️ Editar
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                html += '</tbody></table>';
+            }
+
+            document.getElementById('appointments-list').innerHTML = html;
+        } catch (error) {
+            console.error('Erro ao carregar agendamentos:', error);
+            document.getElementById('appointments-list').innerHTML = '<div class="empty-state"><div class="icon">⚠️</div><p>Erro ao carregar agendamentos</p></div>';
+        }
+    }
+
+    async function loadSelectOptions() {
+        try {
+            // Carregar clientes
+            const clientsResponse = await fetch(`${API_BASE}/clients`);
+            const clients = await clientsResponse.json();
+            const clientSelect = document.getElementById('appointment-client');
+            clients.forEach(client => {
+                const option = document.createElement('option');
+                option.value = client.id;
+                option.textContent = client.name;
+                clientSelect.appendChild(option);
+            });
+
+            // Carregar profissionais
+            const professionalsResponse = await fetch(`${API_BASE}/professionals`);
+            const professionals = await professionalsResponse.json();
+            const professionalSelect = document.getElementById('appointment-professional');
+            professionals.forEach(professional => {
+                const option = document.createElement('option');
+                option.value = professional.id;
+                option.textContent = `${professional.name} - ${professional.specialty}`;
+                professionalSelect.appendChild(option);
+            });
+        } catch (error) {
+            console.error('Erro ao carregar opções:', error);
+        }
+    }
+
+    // Salvar formulário
+    async function saveForm() {
+        try {
+            if (currentFormType === 'client') {
+                await saveClient();
+            } else if (currentFormType === 'professional') {
+                await saveProfessional();
+            } else if (currentFormType === 'appointment') {
+                await saveAppointment();
+            }
+        } catch (error) {
+            console.error('Erro ao salvar:', error);
+            alert('Erro ao salvar. Verifique os dados e tente novamente.');
+        }
+    }
+
+    async function saveClient() {
+        const name = document.getElementById('client-name').value;
+        const cpf = document.getElementById('client-cpf').value;
+        const phone = document.getElementById('client-phone').value;
+        const birth = document.getElementById('client-birth').value;
+
+        const clientData = { name, cpf, phone, birth };
+
+        const url = editingId ? `${API_BASE}/clients/${editingId}` : `${API_BASE}/clients`;
+        const method = editingId ? 'PUT' : 'POST';
+
+        const response = await fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(clientData)
+        });
+
+        if (response.ok) {
+            closeModal();
+            loadClients();
+            alert(editingId ? 'Cliente atualizado com sucesso!' : 'Cliente cadastrado com sucesso!');
+        } else {
+            throw new Error('Erro na requisição');
+        }
+    }
+
+    async function saveProfessional() {
+        const name = document.getElementById('professional-name').value;
+        const cpf = document.getElementById('professional-cpf').value;
+        const specialty = document.getElementById('professional-specialty').value;
+        const birth = document.getElementById('professional-birth').value;
+
+        const professionalData = { name, cpf, specialty, birth };
+
+        const url = editingId ? `${API_BASE}/professionals/${editingId}` : `${API_BASE}/professionals`;
+        const method = editingId ? 'PUT' : 'POST';
+
+        const response = await fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(professionalData)
+        });
+
+        if (response.ok) {
+            closeModal();
+            loadProfessionals();
+            alert(editingId ? 'Profissional atualizado com sucesso!' : 'Profissional cadastrado com sucesso!');
+        } else {
+            throw new Error('Erro na requisição');
+        }
+    }
+
+    async function saveAppointment() {
+        const clientId = document.getElementById('appointment-client').value;
+        const professionalId = document.getElementById('appointment-professional').value;
+        const date = document.getElementById('appointment-date').value;
+        const time = document.getElementById('appointment-time').value;
+        const healthInsurance = document.getElementById('appointment-insurance').value;
+        const paymentMethod = document.getElementById('appointment-payment').value;
+
+        const dateTime = `${date}T${time}:00`;
+
+        const appointmentData = {
+            clientId: parseInt(clientId),
+            professionalId: parseInt(professionalId),
+            dateTime: dateTime,
+            healthInsurance: healthInsurance || null,
+            paymentMethod: paymentMethod
+        };
+
+        const url = editingId ? `${API_BASE}/appointments/${editingId}` : `${API_BASE}/appointments`;
+        const method = editingId ? 'PUT' : 'POST';
+
+        const response = await fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(appointmentData)
+        });
+
+        if (response.ok) {
+            closeModal();
+            loadAppointments();
+            alert(editingId ? 'Agendamento atualizado com sucesso!' : 'Agendamento cadastrado com sucesso!');
+        } else {
+            throw new Error('Erro na requisição');
+        }
+    }
+
+    // Funções de exclusão
+    async function deleteClient(id) {
+        if (confirm('Tem certeza que deseja excluir este cliente?')) {
+            try {
+                const response = await fetch(`${API_BASE}/clients/${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    loadClients();
+                    alert('Cliente excluído com sucesso!');
+                } else {
+                    throw new Error('Erro na requisição');
+                }
+            } catch (error) {
+                console.error('Erro ao excluir cliente:', error);
+                alert('Erro ao excluir cliente. Tente novamente.');
+            }
+        }
+    }
+
+    async function deleteProfessional(id) {
+        if (confirm('Tem certeza que deseja excluir este profissional?')) {
+            try {
+                const response = await fetch(`${API_BASE}/professionals/${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    loadProfessionals();
+                    alert('Profissional excluído com sucesso!');
+                } else {
+                    throw new Error('Erro na requisição');
+                }
+            } catch (error) {
+                console.error('Erro ao excluir profissional:', error);
+                alert('Erro ao excluir profissional. Tente novamente.');
+            }
+        }
+    }
+
+    // Formatação de CPF
+    document.addEventListener('input', function(e) {
+        if (e.target.id.includes('cpf')) {
+            let value = e.target.value.replace(/\D/g, '');
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+            e.target.value = value;
+        }
+
+        if (e.target.id.includes('phone')) {
+            let value = e.target.value.replace(/\D/g, '');
+            value = value.replace(/(\d{2})(\d)/, '($1) $2');
+            value = value.replace(/(\d{4})(\d)/, '$1-$2');
+            value = value.replace(/(\d{4})-(\d)(\d{4})/, '$1$2-$3');
+            e.target.value = value;
+        }
+    });
+
+    // Fechar modal clicando fora
+    document.getElementById('modal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeModal();
+        }
+    });
+
+    // Atalhos de teclado
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeModal();
+        }
+    });
+
+    // Validação de formulário
+    function validateForm() {
+        const form = document.querySelector('#modal form');
+        const inputs = form.querySelectorAll('input[required], select[required]');
+
+        for (let input of inputs) {
+            if (!input.value.trim()) {
+                input.focus();
+                alert('Por favor, preencha todos os campos obrigatórios.');
+                return false;
+            }
+        }
+
+        // Validação específica de CPF
+        const cpfInputs = form.querySelectorAll('input[id*="cpf"]');
+        for (let cpfInput of cpfInputs) {
+            if (cpfInput.value && !isValidCPF(cpfInput.value)) {
+                cpfInput.focus();
+                alert('Por favor, insira um CPF válido.');
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    function isValidCPF(cpf) {
+        cpf = cpf.replace(/[^\d]/g, '');
+
+        if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) {
+            return false;
+        }
+
+        let sum = 0;
+        for (let i = 0; i < 9; i++) {
+            sum += parseInt(cpf.charAt(i)) * (10 - i);
+        }
+        let remainder = (sum * 10) % 11;
+        if (remainder === 10 || remainder === 11) remainder = 0;
+        if (remainder !== parseInt(cpf.charAt(9))) return false;
+
+        sum = 0;
+        for (let i = 0; i < 10; i++) {
+            sum += parseInt(cpf.charAt(i)) * (11 - i);
+        }
+        remainder = (sum * 10) % 11;
+        if (remainder === 10 || remainder === 11) remainder = 0;
+        if (remainder !== parseInt(cpf.charAt(10))) return false;
+
+        return true;
+    }
+
+    // Sobrescrever a função saveForm para incluir validação
+    const originalSaveForm = saveForm;
+    saveForm = async function() {
+        if (!validateForm()) {
+            return;
+        }
+        await originalSaveForm();
+    };
+
+    // Função para exportar dados (funcionalidade extra)
+    function exportData(type) {
+        // Esta função pode ser implementada futuramente para exportar dados em CSV/Excel
+        alert(`Funcionalidade de exportação de ${type} será implementada em breve!`);
+    }
+
+    // Função de busca (funcionalidade extra)
+    function setupSearch() {
+        // Esta função pode ser implementada futuramente para adicionar busca nas tabelas
+        console.log('Funcionalidade de busca será implementada em breve!');
+    }
+
+    // Notificações do sistema
+    function showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            z-index: 10000;
+            animation: slideIn 0.3s ease;
+            max-width: 400px;
+        `;
+
+        switch(type) {
+            case 'success':
+                notification.style.background = 'linear-gradient(135deg, #48bb78 0%, #38a169 100%)';
+                break;
+            case 'error':
+                notification.style.background = 'linear-gradient(135deg, #f56565 0%, #e53e3e 100%)';
+                break;
+            default:
+                notification.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+        }
+
+        notification.textContent = message;
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+            notification.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 300);
+        }, 3000);
+    }
+
+    // Adicionar animações CSS
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+    `;
+    document.head.appendChild(style);
+</script>
+</body>
+</html>

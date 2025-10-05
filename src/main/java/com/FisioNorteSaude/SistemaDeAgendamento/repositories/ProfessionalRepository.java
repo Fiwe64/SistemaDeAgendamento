@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface ProfessionalRepository extends JpaRepository<Professional, Long> {
-    Optional<Professional> findByCpf(Long cpf);
+    Optional<Professional> findByCpf(String cpf);
 }

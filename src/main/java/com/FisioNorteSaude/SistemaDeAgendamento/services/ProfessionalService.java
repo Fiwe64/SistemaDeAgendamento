@@ -25,7 +25,7 @@ public class ProfessionalService {
         return list.stream().map(ProfessionalDTO::new).collect(Collectors.toList());
     }
 
-    public ProfessionalDTO findByCpf(Long cpf){
+    public ProfessionalDTO findByCpf(String cpf){
         Optional<Professional> professional = professionalRepository.findByCpf(cpf);
 
         Professional entity = professional.orElseThrow(()-> new ResourceNotFoundException("Professionale com CPF " + cpf + " não encontrado."));

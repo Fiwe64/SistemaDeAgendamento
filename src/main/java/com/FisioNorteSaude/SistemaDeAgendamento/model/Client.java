@@ -17,9 +17,6 @@ public class Client extends User{
 
     private String phone;
 
-
-
-
     public Client(ClientDTO clientDTO){
         super(clientDTO.getName(), clientDTO.getBirth(), clientDTO.getCpf());
 

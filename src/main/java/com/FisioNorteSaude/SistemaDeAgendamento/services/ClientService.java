@@ -26,7 +26,7 @@ public class ClientService {
     }
 
 
-    public ClientDTO findByCpf(Long cpf){
+    public ClientDTO findByCpf(String cpf){
         Optional<Client> client = clientRepository.findByCpf(cpf);
 
         Client entity = client.orElseThrow(()-> new ResourceNotFoundException("Cliente com CPF " + cpf + " não encontrado."));
