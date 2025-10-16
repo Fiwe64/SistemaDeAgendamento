@@ -33,6 +33,11 @@ public class Appointment {
     private PaymentMethod paymentMethod;
 
 
+
+
+    private boolean finalizado;
+
+
     public Appointment(AppointmentDTO entity){
         this.id = entity.getId();
         this.dateTime = entity.getDateTime();
@@ -40,5 +45,7 @@ public class Appointment {
         this.professional = new Professional(entity.getProfessional());
         this.healthInsurance = entity.getHealthInsurance();
         this.paymentMethod = entity.getPaymentMethod();
+
+        finalizado = false;
     }
 }

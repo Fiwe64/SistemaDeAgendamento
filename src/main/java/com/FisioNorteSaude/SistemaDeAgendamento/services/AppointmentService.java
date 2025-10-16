@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import java.util.Set;
@@ -36,8 +37,23 @@ public class AppointmentService {
 
 
     public List<AppointmentDTO> findAll() {
-        List<Appointment> list = appointmentRepository.findAll();
-        return list.stream().map(AppointmentDTO::new).collect(Collectors.toList());
+        List<Appointment> list = appointmentRepository.findAll();return list.stream().map(AppointmentDTO::new).collect(Collectors.toList());
+    }
+
+    public List<AppointmentDTO> findDisponiveis(){
+        List<Appointment> todos = appointmentRepository.findAll();
+
+        List<Appointment> disponiveis= new ArrayList<>();
+
+        for(Appointment obj : todos){
+            if(!obj.isFinalizado()){
+                disponiveis.add(obj);
+            }
+        }
+
+        return disponiveis.stream()
+                .map(AppointmentDTO::new)
+                .collect(Collectors.toList());
     }
 
 
@@ -70,6 +86,7 @@ public class AppointmentService {
         return new AppointmentDTO(entity);
     }
 
+
     public void deleteById(Long id){
         appointmentRepository.deleteById(id);
     }
@@ -85,10 +102,7 @@ public class AppointmentService {
         return new AppointmentDTO(entity);
     }
 
-    private LocalDateTime findNextAvaliableTimeSlot(LocalDateTime appoinmentDateTime,Professional){
-        LocalTime appoinmentTime = appoinmentDateTime.toLocalTime();
 
-    }
 
 
 

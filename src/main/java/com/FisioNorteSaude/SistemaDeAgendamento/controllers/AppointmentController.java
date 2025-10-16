@@ -20,7 +20,7 @@ public class AppointmentController {
 
     @GetMapping
     public ResponseEntity<List<AppointmentDTO>> findAll(){
-        List<AppointmentDTO  > list = appointmentService.findAll();
+        List<AppointmentDTO  > list = appointmentService.findDisponiveis();
 
         return ResponseEntity.ok().body(list);
     }

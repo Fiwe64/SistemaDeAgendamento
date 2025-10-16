@@ -2,7 +2,6 @@ package com.FisioNorteSaude.SistemaDeAgendamento.model.enums;
 
 import lombok.Getter;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 
