@@ -42,7 +42,7 @@ public class AppointmentController {
         return ResponseEntity.ok().body(updateAppointment);
     }
 
-    @GetMapping(value = "/{id}")
+    @GetMapping(value = "/disponiveis/dias/{id}")
     public ResponseEntity<List<LocalDate>> diasDisponiveis(@PathVariable Long id){
         List<LocalDate> list = appointmentService.diasDisponiveis(id);
         return ResponseEntity.ok().body(list);

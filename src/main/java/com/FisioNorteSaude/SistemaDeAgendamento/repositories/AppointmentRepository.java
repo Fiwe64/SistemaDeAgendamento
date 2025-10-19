@@ -34,10 +34,23 @@ public interface AppointmentRepository extends JpaRepository<Appointment,Long> {
     /**
      * Verifica se o profissional possui QUALQUER agendamento ATIVO em uma data específica.
      * Retorna TRUE se houver agendamentos não finalizados na data, FALSE caso contrário.
-     */
+     *
+     *
+     *
     @Query("SELECT CASE WHEN COUNT(a) > 0 THEN TRUE ELSE FALSE END FROM Appointment a " +
             "WHERE a.professional = :professional " +
             "AND FUNCTION('DATE', a.dateTime) = :date " +
+            "AND a.finalizado = false")*/
+
+
+
+    /**
+     * Verifica se o profissional possui QUALQUER agendamento ATIVO em uma data específica.
+     * Corrigido para ser compatível com o banco H2 (usando CAST).
+     */
+    @Query("SELECT CASE WHEN COUNT(a) > 0 THEN TRUE ELSE FALSE END FROM Appointment a " +
+            "WHERE a.professional = :professional " +
+            "AND CAST(a.dateTime AS date) = :date " + // <-- CORREÇÃO APLICADA AQUI
             "AND a.finalizado = false")
     boolean existsActiveAppointmentOnDate(
             @Param("professional") Professional professional,

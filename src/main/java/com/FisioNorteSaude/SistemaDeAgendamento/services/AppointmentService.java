@@ -70,7 +70,7 @@ public class AppointmentService {
 
         List<LocalDate> diasDisponiveis = new ArrayList<>();
         LocalDate hoje = LocalDate.now();
-        for(int i=1;i<5;i++){
+        for(int i=1;i<=6;i++){
             LocalDate dataDaBusca = hoje.plusDays(i);
             if(!appointmentRepository.existsActiveAppointmentOnDate(professional,dataDaBusca)){
                 diasDisponiveis.add(dataDaBusca);
