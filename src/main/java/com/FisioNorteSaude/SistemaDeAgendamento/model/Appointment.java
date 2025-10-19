@@ -32,9 +32,6 @@ public class Appointment {
     @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;
 
-
-
-
     private boolean finalizado;
 
 

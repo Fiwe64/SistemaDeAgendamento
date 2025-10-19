@@ -11,15 +11,18 @@ import com.FisioNorteSaude.SistemaDeAgendamento.repositories.ClientRepository;
 import com.FisioNorteSaude.SistemaDeAgendamento.repositories.ProfessionalRepository;
 import com.FisioNorteSaude.SistemaDeAgendamento.services.exceptions.BusinnesException;
 import com.FisioNorteSaude.SistemaDeAgendamento.services.exceptions.ResourceNotFoundException;
+import org.springframework.cglib.core.Local;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -51,9 +54,32 @@ public class AppointmentService {
             }
         }
 
+
+
+
         return disponiveis.stream()
                 .map(AppointmentDTO::new)
                 .collect(Collectors.toList());
+    }
+
+
+    public List<LocalDate> diasDisponiveis(Long id) {
+        Professional professional =professionalRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Profissional com ID " + id + " não encontrado."));
+
+
+        List<LocalDate> diasDisponiveis = new ArrayList<>();
+        LocalDate hoje = LocalDate.now();
+        for(int i=1;i<5;i++){
+            LocalDate dataDaBusca = hoje.plusDays(i);
+            if(!appointmentRepository.existsActiveAppointmentOnDate(professional,dataDaBusca)){
+                diasDisponiveis.add(dataDaBusca);
+            }
+        }
+
+
+
+        return diasDisponiveis;
     }
 
 

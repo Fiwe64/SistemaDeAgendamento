@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -20,7 +21,7 @@ public class AppointmentController {
 
     @GetMapping
     public ResponseEntity<List<AppointmentDTO>> findAll(){
-        List<AppointmentDTO  > list = appointmentService.findDisponiveis();
+        List<AppointmentDTO> list = appointmentService.findAll();
 
         return ResponseEntity.ok().body(list);
     }
@@ -39,5 +40,11 @@ public class AppointmentController {
         AppointmentDTO updateAppointment = appointmentService.update(id,obj);
 
         return ResponseEntity.ok().body(updateAppointment);
+    }
+
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<List<LocalDate>> diasDisponiveis(@PathVariable Long id){
+        List<LocalDate> list = appointmentService.diasDisponiveis(id);
+        return ResponseEntity.ok().body(list);
     }
 }
