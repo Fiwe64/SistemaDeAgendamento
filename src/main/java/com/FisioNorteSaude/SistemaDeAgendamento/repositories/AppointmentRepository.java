@@ -59,6 +59,11 @@ public interface AppointmentRepository extends JpaRepository<Appointment,Long> {
             @Param("date") LocalDate date
     );
 
+
+    @Query("SELECT CASE WHEN COUNT(a) > 0 THEN TRUE ELSE FALSE END FROM Appointment a " +
+            "WHERE a.professional = :professional " +
+            "AND a.dateTime = :dateTime " +
+            "AND a.finalizado = false")
     boolean existsActiveAppointmentOnDateTime(
             @Param("professional") Professional professional,
             @Param("dateTime") LocalDateTime dateTime

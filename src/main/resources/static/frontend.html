@@ -297,7 +297,6 @@
 </div>
 
 <div class="container">
-    <!-- Menu Principal -->
     <div id="main-menu" class="main-menu">
         <div class="menu-card" onclick="showSection('clients')">
             <h3><span class="icon">👥</span> Clientes</h3>
@@ -324,7 +323,6 @@
         </div>
     </div>
 
-    <!-- Área de Conteúdo - Clientes -->
     <div id="clients-section" class="content-area">
         <button class="btn back-btn" onclick="showMainMenu()">
             <span class="icon">←</span> Voltar ao Menu
@@ -344,7 +342,6 @@
         </div>
     </div>
 
-    <!-- Área de Conteúdo - Profissionais -->
     <div id="professionals-section" class="content-area">
         <button class="btn back-btn" onclick="showMainMenu()">
             <span class="icon">←</span> Voltar ao Menu
@@ -364,7 +361,6 @@
         </div>
     </div>
 
-    <!-- Área de Conteúdo - Agendamentos -->
     <div id="appointments-section" class="content-area">
         <button class="btn back-btn" onclick="showMainMenu()">
             <span class="icon">←</span> Voltar ao Menu
@@ -385,7 +381,6 @@
     </div>
 </div>
 
-<!-- Modal para Formulários -->
 <div id="modal" class="modal">
     <div class="modal-content">
         <h3 id="modal-title">Formulário</h3>
@@ -566,7 +561,7 @@ async function showProfessionalForm(professional = null) {
                     </div>
                     <div class="form-group">
                         <label for="appointment-professional">Profissional *</label>
-                        <select id="appointment-professional" required>
+                        <select id="appointment-professional" required onchange="loadAvailableDays(this.value)">
                             <option value="">Selecione o profissional</option>
                         </select>
                     </div>
@@ -574,7 +569,9 @@ async function showProfessionalForm(professional = null) {
                 <div class="form-row">
                     <div class="form-group">
                         <label for="appointment-date">Data *</label>
-                        <input type="date" id="appointment-date" value="${appointment ? appointment.dateTime.split('T')[0] : ''}" required>
+                        <select id="appointment-date" required>
+                           <option value="">Selecione um profissional primeiro</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="appointment-time">Horário *</label>
@@ -614,10 +611,40 @@ async function showProfessionalForm(professional = null) {
         if (appointment) {
             setTimeout(() => {
                 document.getElementById('appointment-client').value = appointment.client.id;
-                document.getElementById('appointment-professional').value = appointment.professional.id;
+                const professionalSelect = document.getElementById('appointment-professional');
+                professionalSelect.value = appointment.professional.id;
+                loadAvailableDays(appointment.professional.id, appointment.dateTime.split('T')[0]);
             }, 100);
         }
     }
+
+    async function loadAvailableDays(professionalId, selectedDate = null) {
+        const dateSelect = document.getElementById('appointment-date');
+        if (!professionalId) {
+            dateSelect.innerHTML = '<option value="">Selecione um profissional primeiro</option>';
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_BASE}/appointments/disponiveis/dias/${professionalId}`);
+            const availableDays = await response.json();
+
+            dateSelect.innerHTML = '<option value="">Selecione uma data</option>';
+            availableDays.forEach(day => {
+                const option = document.createElement('option');
+                option.value = day;
+                option.textContent = new Date(day).toLocaleDateString('pt-BR', {timeZone: 'UTC'});
+                if (day === selectedDate) {
+                    option.selected = true;
+                }
+                dateSelect.appendChild(option);
+            });
+        } catch (error) {
+            console.error('Erro ao carregar dias disponíveis:', error);
+            dateSelect.innerHTML = '<option value="">Erro ao carregar datas</option>';
+        }
+    }
+
 
     // Carregamento de dados
     async function loadClients() {

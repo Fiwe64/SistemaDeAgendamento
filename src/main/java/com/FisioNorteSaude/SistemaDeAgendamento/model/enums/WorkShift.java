@@ -8,7 +8,7 @@ import java.time.LocalTime;
 @Getter
 public enum WorkShift {
 
-    MORNIGN(LocalTime.of(9,0),LocalTime.of(12,0)),
+    MORNING(LocalTime.of(9,0),LocalTime.of(12,0)),
     AFTERNOON(LocalTime.of(13,0),LocalTime.of(18,0));
 
     private final LocalTime startTime;
