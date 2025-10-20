@@ -10,6 +10,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -28,11 +29,7 @@ public class AppointmentController {
     @PostMapping
     public  ResponseEntity<AppointmentDTO> insert(@RequestBody AppointmentNewDTO obj){
         AppointmentDTO newAppointment = appointmentService.insert(obj);
-
-
-
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(newAppointment.getId()).toUri();
-
         return ResponseEntity.created(uri).body(newAppointment);
     }
     @PutMapping(value = "/{id}")
@@ -45,6 +42,17 @@ public class AppointmentController {
     @GetMapping(value = "/disponiveis/dias/{id}")
     public ResponseEntity<List<LocalDate>> diasDisponiveis(@PathVariable Long id){
         List<LocalDate> list = appointmentService.diasDisponiveis(id);
+        return ResponseEntity.ok().body(list);
+    }
+
+    @GetMapping(value = "/disponiveis/horas/{professionalId}")
+    public ResponseEntity<List<LocalDateTime>> horarioDisponivel(
+            @PathVariable Long professionalId,
+            @RequestParam("data") LocalDate dataSolicitada
+    ) {
+        // A lista de retorno agora é List<LocalDateTime>
+        List<LocalDateTime> list = appointmentService.horarioDisponivel(professionalId, dataSolicitada);
+
         return ResponseEntity.ok().body(list);
     }
 }

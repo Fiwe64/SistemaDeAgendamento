@@ -63,6 +63,7 @@ public class AppointmentService {
     }
 
 
+    //retorna 5 dias disponiveis para agendamento
     public List<LocalDate> diasDisponiveis(Long id) {
         Professional professional =professionalRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Profissional com ID " + id + " não encontrado."));
@@ -76,10 +77,54 @@ public class AppointmentService {
                 diasDisponiveis.add(dataDaBusca);
             }
         }
-
-
-
         return diasDisponiveis;
+    }
+
+    //retorna uma lista de horarios disponiveis
+    public List<LocalDateTime> horarioDisponivel(Long id,LocalDate dataSolicitada){
+
+        LocalTime inicioAlmoco = LocalTime.of(12,0);
+        LocalTime fimAlmoco = LocalTime.of(13,0);
+
+        List<LocalDateTime> horariosDisponiveis = new ArrayList<>();
+
+        Professional professional =professionalRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Profissional com ID " + id + " não encontrado."));
+        LocalDateTime dataHorario = dataSolicitada.atTime(8,0);
+
+        for(int i = 1;i<=12;i++){
+
+            LocalDateTime dataHoraBusca = dataHorario.plusMinutes(40L*i);
+            LocalTime horaSlot = dataHoraBusca.toLocalTime();
+            boolean estaDuranteOAlmoco = !horaSlot.isBefore(inicioAlmoco) && horaSlot.isBefore(fimAlmoco);
+
+
+            if(!estaDuranteOAlmoco ){
+                if(!appointmentRepository.existsActiveAppointmentOnDateTime(professional,dataHoraBusca)){
+                    horariosDisponiveis.add(dataHoraBusca);
+                }
+            }
+
+        }
+        return horariosDisponiveis;
+    }
+
+
+    private boolean isSlotAvailable(Long professionalId, LocalDate date, LocalTime time) {
+
+        // 1. Busca o Professional, lançando exceção se não for encontrado.
+        Professional professional = professionalRepository.findById(professionalId)
+                .orElseThrow(() -> new ResourceNotFoundException("Profissional com ID " + professionalId + " não encontrado."));
+
+        // 2. Combina a data e a hora para obter o LocalDateTime exato do slot.
+        LocalDateTime slotDateTime = LocalDateTime.of(date, time);
+
+        // 3. Chama o método do repositório para verificar a ocupação.
+        // O método do repositório (existsActiveAppointmentOnDateTime) retorna TRUE se OCUPADO.
+        boolean isOccupied = appointmentRepository.existsActiveAppointmentOnDateTime(professional, slotDateTime);
+
+        // 4. Nega o resultado para informar se está DISPONÍVEL (TRUE se !Ocupado).
+        return !isOccupied;
     }
 
 
