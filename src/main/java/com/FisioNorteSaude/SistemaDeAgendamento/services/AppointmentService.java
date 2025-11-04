@@ -65,17 +65,30 @@ public class AppointmentService {
 
     //retorna 5 dias disponiveis para agendamento
     public List<LocalDate> diasDisponiveis(Long id) {
-        Professional professional =professionalRepository.findById(id)
+        Professional professional = professionalRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Profissional com ID " + id + " não encontrado."));
 
 
         List<LocalDate> diasDisponiveis = new ArrayList<>();
         LocalDate hoje = LocalDate.now();
-        for(int i=1;i<=6;i++){
+
+        // Define o número máximo de horários ocupados permitidos para que o dia seja listado.
+        // Com 10 slots no total, 5 ocupados = 5 livres.
+        // Se tiver 6 ocupados (mais que 5), terá 4 livres e NÃO será listado.
+        final long MAX_OCUPADOS_PERMITIDOS = 5;
+
+        // Itera pelos próximos 6 dias (como antes)
+        for (int i = 1; i <= 6; i++) {
             LocalDate dataDaBusca = hoje.plusDays(i);
-            if(!appointmentRepository.existsActiveAppointmentOnDate(professional,dataDaBusca)){
+
+            // 1. Conta quantos agendamentos *já existem* nesse dia
+            long horariosOcupados = appointmentRepository.countActiveAppointmentsOnDate(professional, dataDaBusca);
+
+            // 2. Compara com o limite definido
+            if (horariosOcupados <= MAX_OCUPADOS_PERMITIDOS) {
                 diasDisponiveis.add(dataDaBusca);
             }
+
         }
         return diasDisponiveis;
     }
@@ -126,6 +139,8 @@ public class AppointmentService {
         // 4. Nega o resultado para informar se está DISPONÍVEL (TRUE se !Ocupado).
         return !isOccupied;
     }
+
+
 
 
     @Transactional(readOnly = true)

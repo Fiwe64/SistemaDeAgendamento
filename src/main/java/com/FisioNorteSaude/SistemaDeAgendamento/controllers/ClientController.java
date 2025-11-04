@@ -31,6 +31,12 @@ public class ClientController {
         return ResponseEntity.ok().body(obj);
     }
 
+    @GetMapping(value = "/cpf/{cpf}")
+    public ResponseEntity<ClientDTO> findByCpf(@PathVariable String cpf) {
+        ClientDTO obj = clientService.findByCpf(cpf);
+        return ResponseEntity.ok().body(obj);
+    }
+
     @PostMapping
     public  ResponseEntity<ClientDTO> insert(@RequestBody ClientDTO obj){
         ClientDTO newClient = clientService.insert(obj);
@@ -51,4 +57,6 @@ public class ClientController {
 
         return ResponseEntity.ok().body(obj);
      }
+
+
 }

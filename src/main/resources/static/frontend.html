@@ -569,13 +569,15 @@ async function showProfessionalForm(professional = null) {
                 <div class="form-row">
                     <div class="form-group">
                         <label for="appointment-date">Data *</label>
-                        <select id="appointment-date" required>
+                        <select id="appointment-date" required onchange="onDateSelect()">
                            <option value="">Selecione um profissional primeiro</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="appointment-time">Horário *</label>
-                        <input type="time" id="appointment-time" value="${appointment ? appointment.dateTime.split('T')[1] : ''}" required>
+                        <select id="appointment-time" required>
+                            <option value="">Selecione uma data primeiro</option>
+                        </select>
                     </div>
                 </div>
                 <div class="form-row">
@@ -593,11 +595,10 @@ async function showProfessionalForm(professional = null) {
                         <label for="appointment-payment">Forma de Pagamento *</label>
                         <select id="appointment-payment" required>
                             <option value="">Selecione</option>
-                            <option value="DINHEIRO" ${appointment && appointment.paymentMethod === 'DINHEIRO' ? 'selected' : ''}>Dinheiro</option>
-                            <option value="CARTAO_CREDITO" ${appointment && appointment.paymentMethod === 'CARTAO_CREDITO' ? 'selected' : ''}>Cartão de Crédito</option>
-                            <option value="CARTAO_DEBITO" ${appointment && appointment.paymentMethod === 'CARTAO_DEBITO' ? 'selected' : ''}>Cartão de Débito</option>
+                            <option value="CREDIT" ${appointment && appointment.paymentMethod === 'CREDIT' ? 'selected' : ''}>Cartão de Crédito</option>
+                            <option value="DEBIT" ${appointment && appointment.paymentMethod === 'DEBIT' ? 'selected' : ''}>Cartão de Débito</option>
                             <option value="PIX" ${appointment && appointment.paymentMethod === 'PIX' ? 'selected' : ''}>PIX</option>
-                            <option value="CONVENIO" ${appointment && appointment.paymentMethod === 'CONVENIO' ? 'selected' : ''}>Convênio</option>
+                            <option value="HEALTH_INSURANCE" ${appointment && appointment.paymentMethod === 'HEALTH_INSURANCE' ? 'selected' : ''}>Convênio</option>
                         </select>
                     </div>
                 </div>
@@ -609,17 +610,35 @@ async function showProfessionalForm(professional = null) {
         loadSelectOptions();
 
         if (appointment) {
+            // Lógica para pré-selecionar dados ao editar (mantida)
             setTimeout(() => {
                 document.getElementById('appointment-client').value = appointment.client.id;
                 const professionalSelect = document.getElementById('appointment-professional');
                 professionalSelect.value = appointment.professional.id;
-                loadAvailableDays(appointment.professional.id, appointment.dateTime.split('T')[0]);
-            }, 100);
+                
+                const dataAgendamento = appointment.dateTime.split('T')[0];
+                const horaAgendamento = appointment.dateTime; // O LocalDateTime completo
+                
+                // Carrega os dias e, quando terminar, pré-seleciona a data
+                loadAvailableDays(appointment.professional.id, dataAgendamento)
+                    .then(() => {
+                        // Agora carrega os horários para essa data e pré-seleciona o horário
+                        loadAvailableTimes(appointment.professional.id, dataAgendamento, horaAgendamento);
+                    });
+                
+                // Pré-seleciona o pagamento e convênio
+                document.getElementById('appointment-insurance').value = appointment.healthInsurance || "";
+                document.getElementById('appointment-payment').value = appointment.paymentMethod;
+
+            }, 200);
         }
     }
 
     async function loadAvailableDays(professionalId, selectedDate = null) {
         const dateSelect = document.getElementById('appointment-date');
+        // Limpa também os horários, pois o profissional mudou
+        document.getElementById('appointment-time').innerHTML = '<option value="">Selecione uma data primeiro</option>';
+
         if (!professionalId) {
             dateSelect.innerHTML = '<option value="">Selecione um profissional primeiro</option>';
             return;
@@ -633,7 +652,10 @@ async function showProfessionalForm(professional = null) {
             availableDays.forEach(day => {
                 const option = document.createElement('option');
                 option.value = day;
-                option.textContent = new Date(day).toLocaleDateString('pt-BR', {timeZone: 'UTC'});
+                // Formata a data para dd/mm/aaaa
+                const dateObj = new Date(day + 'T00:00:00'); // Adiciona T00:00:00 para tratar como local
+                option.textContent = dateObj.toLocaleDateString('pt-BR', {timeZone: 'UTC'});
+                
                 if (day === selectedDate) {
                     option.selected = true;
                 }
@@ -642,6 +664,72 @@ async function showProfessionalForm(professional = null) {
         } catch (error) {
             console.error('Erro ao carregar dias disponíveis:', error);
             dateSelect.innerHTML = '<option value="">Erro ao carregar datas</option>';
+        }
+    }
+
+    // **** NOVA FUNÇÃO ADICIONADA ****
+    // Função auxiliar para pegar os IDs do formulário e chamar loadAvailableTimes
+    function onDateSelect() {
+        const professionalId = document.getElementById('appointment-professional').value;
+        const selectedDate = document.getElementById('appointment-date').value;
+        
+        if (professionalId && selectedDate) {
+            loadAvailableTimes(professionalId, selectedDate);
+        }
+    }
+
+    // **** NOVA FUNÇÃO ADICIONADA ****
+    // Função para carregar os horários disponíveis (List<LocalDateTime>)
+    async function loadAvailableTimes(professionalId, date, selectedDateTime = null) {
+        const timeSelect = document.getElementById('appointment-time');
+        if (!professionalId || !date) {
+            timeSelect.innerHTML = '<option value="">Selecione profissional e data</option>';
+            return;
+        }
+
+        timeSelect.innerHTML = '<option value="">Carregando horários...</option>';
+
+        try {
+            // Chama o novo endpoint do backend
+            const response = await fetch(`${API_BASE}/appointments/disponiveis/horas/${professionalId}?data=${date}`);
+            
+            if (!response.ok) {
+                throw new Error('Falha ao buscar horários');
+            }
+
+            const availableTimes = await response.json(); // Espera uma List<LocalDateTime>
+
+            if (availableTimes.length === 0) {
+                 timeSelect.innerHTML = '<option value="">Nenhum horário disponível</option>';
+                 return;
+            }
+
+            timeSelect.innerHTML = '<option value="">Selecione um horário</option>';
+            
+            availableTimes.forEach(dateTimeString => {
+                const option = document.createElement('option');
+                const dateTime = new Date(dateTimeString);
+                
+                // Formata a hora para "HH:mm"
+                const timeFormatted = dateTime.toLocaleTimeString('pt-BR', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    timeZone: 'UTC' // Usamos UTC pois o LocalDateTime não tem fuso
+                });
+                
+                option.value = dateTimeString; // O valor será o LocalDateTime completo (ex: "2025-11-05T08:40:00")
+                option.textContent = timeFormatted; // O texto será apenas a hora (ex: "08:40")
+                
+                if (dateTimeString === selectedDateTime) {
+                    option.selected = true;
+                }
+                
+                timeSelect.appendChild(option);
+            });
+
+        } catch (error) {
+            console.error('Erro ao carregar horários disponíveis:', error);
+            timeSelect.innerHTML = '<option value="">Erro ao carregar horários</option>';
         }
     }
 
@@ -672,13 +760,14 @@ async function showProfessionalForm(professional = null) {
                 `;
 
                 clients.forEach(client => {
+                    const dataNasc = new Date(client.birth + 'T00:00:00');
                     html += `
                         <tr>
                             <td>${client.id}</td>
                             <td>${client.name}</td>
                             <td>${client.cpf}</td>
                             <td>${client.phone}</td>
-                            <td>${new Date(client.birth).toLocaleDateString('pt-BR')}</td>
+                            <td>${dataNasc.toLocaleDateString('pt-BR', {timeZone: 'UTC'})}</td>
                             <td>
                                 <button class="btn btn-secondary" onclick="showClientForm(${JSON.stringify(client).replace(/"/g, '&quot;')})">
                                     ✏️ Editar
@@ -725,13 +814,14 @@ async function showProfessionalForm(professional = null) {
                 `;
 
                 professionals.forEach(professional => {
+                    const dataNasc = new Date(professional.birth + 'T00:00:00');
                     html += `
                         <tr>
                             <td>${professional.id}</td>
                             <td>${professional.name}</td>
                             <td>${professional.cpf}</td>
                             <td>${professional.specialty}</td>
-                            <td>${new Date(professional.birth).toLocaleDateString('pt-BR')}</td>
+                            <td>${dataNasc.toLocaleDateString('pt-BR', {timeZone: 'UTC'})}</td>
                             <td>
                                 <button class="btn btn-secondary" onclick="showProfessionalForm(${JSON.stringify(professional).replace(/"/g, '&quot;')})">
                                     ✏️ Editar
@@ -785,7 +875,7 @@ async function showProfessionalForm(professional = null) {
                             <td>${appointment.id}</td>
                             <td>${appointment.client.name}</td>
                             <td>${appointment.professional.name}</td>
-                            <td>${dateTime.toLocaleDateString('pt-BR')} ${dateTime.toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'})}</td>
+                            <td>${dateTime.toLocaleString('pt-BR', {timeZone: 'UTC'})}</td>
                             <td>${appointment.healthInsurance || 'Particular'}</td>
                             <td>${appointment.paymentMethod}</td>
                             <td>
@@ -909,17 +999,21 @@ async function showProfessionalForm(professional = null) {
     async function saveAppointment() {
         const clientId = document.getElementById('appointment-client').value;
         const professionalId = document.getElementById('appointment-professional').value;
-        const date = document.getElementById('appointment-date').value;
-        const time = document.getElementById('appointment-time').value;
+        
+        // **** CORREÇÃO APLICADA AQUI ****
+        // O valor já é o LocalDateTime completo, vindo do <select> de horário
+        const dateTime = document.getElementById('appointment-time').value;
+        
         const healthInsurance = document.getElementById('appointment-insurance').value;
         const paymentMethod = document.getElementById('appointment-payment').value;
 
-        const dateTime = `${date}T${time}:00`;
-
+        // O 'dateTime' já está no formato correto (ex: "2025-11-05T08:40:00")
+        // Não precisamos mais montar com ${date}T${time}:00
+        
         const appointmentData = {
             clientId: parseInt(clientId),
             professionalId: parseInt(professionalId),
-            dateTime: dateTime,
+            dateTime: dateTime, 
             healthInsurance: healthInsurance || null,
             paymentMethod: paymentMethod
         };
@@ -940,7 +1034,8 @@ async function showProfessionalForm(professional = null) {
             loadAppointments();
             alert(editingId ? 'Agendamento atualizado com sucesso!' : 'Agendamento cadastrado com sucesso!');
         } else {
-            throw new Error('Erro na requisição');
+             const errorData = await response.json();
+             alert('Erro ao salvar agendamento: ' + (errorData.message || 'Verifique os dados.'));
         }
     }
 
